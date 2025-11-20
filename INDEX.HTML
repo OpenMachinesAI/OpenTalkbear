@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta-name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TalkBear Emulator</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #ececec;
+            overflow: hidden; /* Prevent scrolling */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* ---------- Startup Screen ---------- */
+        #startup {
+            width: 90%;
+            max-width: 650px;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 22px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        #startup h1 {
+            margin-top: 0;
+        }
+
+        #startup .description {
+            margin: 15px 0 25px 0;
+            font-size: 15px;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #4b7bec;
+            color: white;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #3867d6;
+        }
+
+        /* ---------- Emulator Layout ---------- */
+        #emulator {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #emu-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* iPad frame container */
+        #ipad {
+            width: 768px;
+            height: 1024px;
+            background: #000;
+            border: 14px solid #222;
+            border-radius: 25px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.25);
+
+            /* SCALING */
+            transform-origin: center center;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ---------- STARTUP SCREEN ---------- -->
+    <div id="startup">
+        <h1>TalkBear Emulator</h1>
+
+        <p><strong>This emulator is a preview</strong> and some features may not work yet.<br>
+        Please report issues to:<br>
+        <a href="mailto:alex.openmachines@gmail.com">alex.openmachines@gmail.com</a></p>
+
+        <div class="description">
+            <strong>AURA OS Emulator</strong><br><br>
+            This emulator is a simulation of <strong>AURA OS</strong>, a custom Android launcher designed 
+            to let users talk to their stuffed animal or TalkBear-powered voice device.  
+            AURA OS brings TalkBear technology directly into Android, giving your companion a voice, personality,  
+            and the ability to interact with you in real time.
+        </div>
+
+        <h3>Your PC must have:</h3>
+
+        <ul style="text-align:left; display:inline-block;">
+            <li><strong>Microphone</strong> (Required)</li>
+            <li><strong>Webcam</strong> (Optional)</li>
+        </ul>
+
+        <button onclick="requestPermissions()">Confirm & Continue</button>
+    </div>
+
+    <!-- ---------- EMULATOR ---------- -->
+    <div id="emulator">
+        <div id="emu-wrapper">
+            <div id="ipad">
+                <iframe src="https://talkbearaura-446778277069.us-west1.run.app"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function requestPermissions() {
+            try {
+                // Request mic (required)
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                // Webcam optional
+                navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {});
+
+                // Show emulator
+                document.getElementById("startup").style.display = "none";
+                document.getElementById("emulator").style.display = "block";
+
+                resizeEmulator();
+
+            } catch (err) {
+                alert("A microphone is required to run the TalkBear Emulator.\n\nError: " + err);
+            }
+        }
+
+        /* Auto-scale the emulator to always fit screen with no scroll */
+        function resizeEmulator() {
+            const ipad = document.getElementById("ipad");
+
+            const ipadWidth = 768 + 28;
+            const ipadHeight = 1024 + 28;
+
+            const availableWidth = window.innerWidth;
+            const availableHeight = window.innerHeight;
+
+            const scale = Math.min(
+                availableWidth / ipadWidth,
+                availableHeight / ipadHeight,
+                1
+            );
+
+            ipad.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener("resize", resizeEmulator);
+    </script>
+
+</body>
+</html>
