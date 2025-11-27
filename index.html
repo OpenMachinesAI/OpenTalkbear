@@ -10,14 +10,13 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background: #ececec;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        /* ---------- Startup Screen ---------- */
         #startup {
             width: 90%;
             max-width: 650px;
@@ -54,7 +53,6 @@
             background: #3867d6;
         }
 
-        /* ---------- Emulator Layout ---------- */
         #emulator {
             display: none;
             width: 100vw;
@@ -71,16 +69,23 @@
             overflow: hidden;
         }
 
-        /* iPad frame container */
+        /* Increased iPad frame size */
         #ipad {
-            width: 768px;
-            height: 1024px;
+            width: 880px;
+            height: 1180px;
             background: #000;
             border: 14px solid #222;
             border-radius: 25px;
             box-shadow: 0 0 30px rgba(0,0,0,0.25);
+            transform-origin: center center;
+            overflow: hidden;
+        }
 
-            /* SCALING */
+        /* Scale iframe content to be larger */
+        #iframe-scale {
+            width: 100%;
+            height: 100%;
+            transform: scale(1.2);
             transform-origin: center center;
         }
 
@@ -94,7 +99,6 @@
 </head>
 <body>
 
-    <!-- ---------- STARTUP SCREEN ---------- -->
     <div id="startup">
         <h1>TalkBear Emulator</h1>
 
@@ -105,9 +109,7 @@
         <div class="description">
             <strong>AURA OS Emulator</strong><br><br>
             This emulator is a simulation of <strong>AURA OS</strong>, a custom Android launcher designed 
-            to let users talk to their stuffed animal or TalkBear-powered voice device.  
-            AURA OS brings TalkBear technology directly into Android, giving your companion a voice, personality,  
-            and the ability to interact with you in real time.
+            to let users talk to their stuffed animal or TalkBear-powered voice device.
         </div>
 
         <h3>Your PC must have:</h3>
@@ -120,11 +122,12 @@
         <button onclick="requestPermissions()">Confirm & Continue</button>
     </div>
 
-    <!-- ---------- EMULATOR ---------- -->
     <div id="emulator">
         <div id="emu-wrapper">
             <div id="ipad">
-                <iframe src="https://talkbearaura-446778277069.us-west1.run.app"></iframe>
+                <div id="iframe-scale">
+                    <iframe src="https://talkbearaura-446778277069.us-west1.run.app"></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -132,29 +135,21 @@
     <script>
         async function requestPermissions() {
             try {
-                // Request mic (required)
                 await navigator.mediaDevices.getUserMedia({ audio: true });
-
-                // Webcam optional
                 navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {});
-
-                // Show emulator
                 document.getElementById("startup").style.display = "none";
                 document.getElementById("emulator").style.display = "block";
-
                 resizeEmulator();
-
             } catch (err) {
                 alert("A microphone is required to run the TalkBear Emulator.\n\nError: " + err);
             }
         }
 
-        /* Auto-scale the emulator to always fit screen with no scroll */
         function resizeEmulator() {
             const ipad = document.getElementById("ipad");
 
-            const ipadWidth = 768 + 28;
-            const ipadHeight = 1024 + 28;
+            const ipadWidth = 880 + 28;
+            const ipadHeight = 1180 + 28;
 
             const availableWidth = window.innerWidth;
             const availableHeight = window.innerHeight;
